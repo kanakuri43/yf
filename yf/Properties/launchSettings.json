@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "yf": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\su\\Desktop\\res.csv"
+    }
+  }
+}

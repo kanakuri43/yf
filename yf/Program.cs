@@ -22,19 +22,19 @@ namespace yf
     {
         static async Task Main(string[] args)
         {
-            if (args.Length < 1)
+            if (args.Length < 2)
             {
-                Console.WriteLine("CSVファイルのファイル名を指定してください。");
                 return;
             }
 
-            string csvFileName = args[0];
+            string startingCode = args[0];
+            string csvFileName = args[1];
             var companyInfoList = new List<CompanyInfo>();
             var random = new Random();
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
-                string tickerSymbol = (1332 + i).ToString();
+                string tickerSymbol = (int.Parse(startingCode) + i).ToString();
                 var companyInfo = new CompanyInfo();
 
                 // URLとデータ取得情報をまとめたリスト
@@ -68,7 +68,7 @@ namespace yf
 
                 companyInfoList.Add(companyInfo);
 
-                int waitTime = random.Next(0, 20000);   // 平均時10秒間隔
+                int waitTime = random.Next(0, 2000);   // 平均1秒間隔
                 Thread.Sleep(waitTime);
             }
 

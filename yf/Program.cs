@@ -8,15 +8,7 @@ using System.Threading.Tasks;
 
 namespace yf
 {
-    internal class CompanyInfo
-    {
-        public string Title { get; set; }
-        public string MarketCap { get; set; }
-        public string DividendYield { get; set; }
-        public string SelfCapitalizationRatio { get; set; }
-        public string Feature { get; set; }
-        public string FoundedDate { get; set; }
-    }
+
 
     internal class Program
     {
@@ -27,31 +19,31 @@ namespace yf
                 return;
             }
 
-            string startingCode = args[0];
+            string firstCode = args[0];
             string csvFileName = args[1];
             var companyInfoList = new List<CompanyInfo>();
             var random = new Random();
 
             for (int i = 0; i < 5; i++)
             {
-                string tickerSymbol = (int.Parse(startingCode) + i).ToString();
+                var currentCode = (int.Parse(firstCode) + i).ToString();
                 var companyInfo = new CompanyInfo();
 
                 // URLとデータ取得情報をまとめたリスト
                 var urlDataMappings = new List<(string url, Dictionary<string, Action<string>> dataMappings)>
                 {
                     (
-                        $"https://finance.yahoo.co.jp/quote/{tickerSymbol}.T",
+                        $"https://finance.yahoo.co.jp/quote/{currentCode}.T",
                         new Dictionary<string, Action<string>>
                         {
-                            { "//title", data => companyInfo.Title = data },
+                            { "//title", data => companyInfo.Code = GetTextBetween(data,'【','】') },
                             { "//dt[span[contains(text(), '時価総額')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.MarketCap = data },
                             { "//dt[span[contains(text(), '配当利回り')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.DividendYield = data },
                             { "//dt[span[contains(text(), '自己資本比率')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.SelfCapitalizationRatio = data }
                         }
                     ),
                     (
-                        $"https://finance.yahoo.co.jp/quote/{tickerSymbol}.T/profile",
+                        $"https://finance.yahoo.co.jp/quote/{currentCode}.T/profile",
                         new Dictionary<string, Action<string>>
                         {
                             { "//tr[th[contains(text(), '特色')]]/td", data => companyInfo.Feature = data },
@@ -126,6 +118,20 @@ namespace yf
         static string RemoveCommas(string input)
         {
             return string.IsNullOrEmpty(input) ? input : input.Replace(",", "");
+        }
+
+        // 指定した文字に囲まれた中身を取得する
+        public static string GetTextBetween(string input, char startChar, char endChar)
+        {
+            int startIndex = input.IndexOf(startChar);
+            int endIndex = input.IndexOf(endChar, startIndex + 1);
+
+            if (startIndex != -1 && endIndex != -1 && endIndex > startIndex)
+            {
+                return input.Substring(startIndex + 1, endIndex - startIndex - 1);
+            }
+
+            return string.Empty; // 囲まれた文字列がない場合は空文字を返す
         }
     }
 }

@@ -24,7 +24,7 @@ namespace yf
             var companyInfoList = new List<CompanyInfo>();
             var random = new Random();
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 3; i++)
             {
                 var currentCode = (int.Parse(firstCode) + i).ToString();
                 var companyInfo = new CompanyInfo();
@@ -88,6 +88,10 @@ namespace yf
             try
             {
                 using var httpClient = new HttpClient();
+
+                // ユーザーエージェントを設定
+                httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36");
+
                 return await httpClient.GetStringAsync(url);
             }
             catch (Exception e)

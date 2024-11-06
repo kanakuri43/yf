@@ -1,0 +1,1 @@
+.\yf\bin\Debug\net8.0\yf.exe 6742 C:\Users\User3292\Desktop\res.csv

@@ -36,7 +36,10 @@ namespace yf
                         $"https://finance.yahoo.co.jp/quote/{currentCode}.T",
                         new Dictionary<string, Action<string>>
                         {
-                            { "//title", data => companyInfo.Code = GetTextBetween(data,'【','】') },
+                            { "//title", data => {
+                                companyInfo.Code = GetTextBetween(data,'【','】');
+                                companyInfo.Name = GetTextBefore(data, '【'); // Nameの取得
+                            }},
                             { "//dt[span[contains(text(), '時価総額')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.MarketCap = data },
                             { "//dt[span[contains(text(), '配当利回り')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.DividendYield = data },
                             { "//dt[span[contains(text(), '自己資本比率')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.SelfCapitalizationRatio = data }
@@ -136,6 +139,19 @@ namespace yf
             }
 
             return string.Empty; // 囲まれた文字列がない場合は空文字を返す
+        }
+
+        // 指定した文字の左側を取得する
+        public static string GetTextBefore(string input, char targetChar)
+        {
+            int index = input.IndexOf(targetChar);
+
+            if (index != -1)
+            {
+                return input.Substring(0, index);
+            }
+
+            return input; // 指定の文字が見つからない場合は元の文字列を返す
         }
     }
 }

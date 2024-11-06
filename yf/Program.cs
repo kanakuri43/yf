@@ -14,17 +14,18 @@ namespace yf
     {
         static async Task Main(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length < 3)
             {
                 return;
             }
 
             string firstCode = args[0];
-            string csvFileName = args[1];
+            string codeRange = args[1];
+            string csvFileName = args[2];
             var companyInfoList = new List<CompanyInfo>();
             var random = new Random();
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < int.Parse(codeRange); i++)
             {
                 var currentCode = (int.Parse(firstCode) + i).ToString();
                 var companyInfo = new CompanyInfo();
@@ -63,7 +64,7 @@ namespace yf
 
                 companyInfoList.Add(companyInfo);
 
-                int waitTime = random.Next(0, 2000);   // 平均1秒間隔
+                int waitTime = random.Next(0, 20000);   // 平均10秒間隔
                 Thread.Sleep(waitTime);
             }
 

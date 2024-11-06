@@ -24,7 +24,7 @@ namespace yf
             var companyInfoList = new List<CompanyInfo>();
             var random = new Random();
 
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 10; i++)
             {
                 var currentCode = (int.Parse(firstCode) + i).ToString();
                 var companyInfo = new CompanyInfo();
@@ -115,12 +115,20 @@ namespace yf
                 // 各オブジェクトのプロパティ値を取得してCSVに出力
                 foreach (var company in companyInfoList)
                 {
-                    var values = properties.Select(p => RemoveCommas(p.GetValue(company)?.ToString() ?? ""));
+                    // すべてのプロパティがnullまたは空であるかを確認
+                    var values = properties.Select(p => RemoveCommas(p.GetValue(company)?.ToString() ?? "")).ToList();
+                    if (values.All(string.IsNullOrEmpty))
+                    {
+                        // すべてがnullまたは空の場合、このレコードをスキップ
+                        continue;
+                    }
+
                     writer.WriteLine(string.Join(",", values));
                 }
             }
             Console.WriteLine($"CSVファイル '{fileName}' に出力しました。");
         }
+
         // カンマを除去するヘルパーメソッド
         static string RemoveCommas(string input)
         {

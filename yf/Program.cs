@@ -8,67 +8,75 @@ using System.Threading.Tasks;
 
 namespace yf
 {
-
-
     internal class Program
     {
         static async Task Main(string[] args)
         {
-            if (args.Length < 3)
+            if (args.Length < 2)
             {
+                Console.WriteLine("入力ファイル名と出力ファイル名を指定してください。");
                 return;
             }
 
-            string firstCode = args[0];
-            string codeRange = args[1];
-            string csvFileName = args[2];
+            string inputCsvFileName = args[0];
+            string outputCsvFileName = args[1];
+
             var companyInfoList = new List<CompanyInfo>();
-            var random = new Random();
 
-            for (int i = 0; i < int.Parse(codeRange); i++)
+            // 入力CSVから証券コードを読み取る
+            using (var reader = new StreamReader(inputCsvFileName))
             {
-                var currentCode = (int.Parse(firstCode) + i).ToString();
-                var companyInfo = new CompanyInfo();
-
-                // URLとデータ取得情報をまとめたリスト
-                var urlDataMappings = new List<(string url, Dictionary<string, Action<string>> dataMappings)>
+                string line;
+                reader.ReadLine(); // ヘッダー行をスキップ
+                while ((line = reader.ReadLine()) != null)
                 {
-                    (
-                        $"https://finance.yahoo.co.jp/quote/{currentCode}.T",
-                        new Dictionary<string, Action<string>>
-                        {
-                            { "//title", data => {
-                                companyInfo.Code = GetTextBetween(data,'【','】');
-                                companyInfo.Name = GetTextBefore(data, '【'); // Nameの取得
-                            }},
-                            { "//dt[span[contains(text(), '時価総額')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.MarketCap = data },
-                            { "//dt[span[contains(text(), '配当利回り')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.DividendYield = data },
-                            { "//dt[span[contains(text(), '自己資本比率')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.SelfCapitalizationRatio = data }
-                        }
-                    ),
-                    (
-                        $"https://finance.yahoo.co.jp/quote/{currentCode}.T/profile",
-                        new Dictionary<string, Action<string>>
-                        {
-                            { "//tr[th[contains(text(), '特色')]]/td", data => companyInfo.Feature = data },
-                            { "//tr[th[contains(text(), '上場年月日')]]/td", data => companyInfo.FoundedDate = data }
-                        }
-                    )
-                };
+                    var columns = line.Split(',');
+                    if (columns.Length < 2) continue;
 
-                // URLとXPathを基にデータ取得
-                foreach (var (url, dataMappings) in urlDataMappings)
-                {
-                    await FetchDataAsync(url, dataMappings);
+                    var currentCode = columns[1].Trim(); // B列からコードを取得
+                    var companyInfo = new CompanyInfo();
+                    var random = new Random();
+
+                    // URLとデータ取得情報をまとめたリスト
+                    var urlDataMappings = new List<(string url, Dictionary<string, Action<string>> dataMappings)>
+                    {
+                        (
+                            $"https://finance.yahoo.co.jp/quote/{currentCode}.T",
+                            new Dictionary<string, Action<string>>
+                            {
+                                { "//title", data => {
+                                    companyInfo.Code = GetTextBetween(data,'【','】');
+                                    companyInfo.Name = GetTextBefore(data, '【');
+                                }},
+                                { "//dt[span[contains(text(), '時価総額')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.MarketCap = data },
+                                { "//dt[span[contains(text(), '配当利回り')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.DividendYield = data },
+                                { "//dt[span[contains(text(), '自己資本比率')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.SelfCapitalizationRatio = data }
+                            }
+                        ),
+                        (
+                            $"https://finance.yahoo.co.jp/quote/{currentCode}.T/profile",
+                            new Dictionary<string, Action<string>>
+                            {
+                                { "//tr[th[contains(text(), '特色')]]/td", data => companyInfo.Feature = data },
+                                { "//tr[th[contains(text(), '上場年月日')]]/td", data => companyInfo.FoundedDate = data }
+                            }
+                        )
+                    };
+
+                    // URLとXPathを基にデータ取得
+                    foreach (var (url, dataMappings) in urlDataMappings)
+                    {
+                        await FetchDataAsync(url, dataMappings);
+                    }
+
+                    companyInfoList.Add(companyInfo);
+
+                    int waitTime = random.Next(0, 20000);   // 平均10秒間隔
+                    Thread.Sleep(waitTime);
                 }
-
-                companyInfoList.Add(companyInfo);
-
-                int waitTime = random.Next(0, 20000);   // 平均10秒間隔
-                Thread.Sleep(waitTime);
             }
 
-            SaveToCsv(companyInfoList, csvFileName);
+            SaveToCsv(companyInfoList, outputCsvFileName);
         }
 
         static async Task FetchDataAsync(string url, Dictionary<string, Action<string>> dataMappings)

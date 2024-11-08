@@ -1,1 +1,1 @@
-.\yf\bin\Debug\net8.0\yf.exe 6742 C:\Users\User3292\Desktop\res.csv
+yf.exe C:\Users\User3292\Desktop\data_j10.csv C:\Users\User3292\Desktop\res.csv 10

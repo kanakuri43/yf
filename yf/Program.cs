@@ -12,14 +12,14 @@ namespace yf
     {
         static async Task Main(string[] args)
         {
-            if (args.Length < 2)
+            if (args.Length < 3)
             {
-                Console.WriteLine("入力ファイル名と出力ファイル名を指定してください。");
                 return;
             }
 
             string inputCsvFileName = args[0];
             string outputCsvFileName = args[1];
+            string intervalAverage = args[2];
 
             var companyInfoList = new List<CompanyInfo>();
 
@@ -73,7 +73,7 @@ namespace yf
 
                     companyInfoList.Add(companyInfo);
 
-                    int waitTime = random.Next(0, 2000);   // 平均10秒間隔
+                    int waitTime = random.Next(0, int.Parse(intervalAverage) * 2000);   
                     Thread.Sleep(waitTime);
                 }
             }

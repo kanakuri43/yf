@@ -9,13 +9,15 @@ namespace yf
     internal class CompanyInfo
     {
         public string Code { get; set; }
-        public string Name { get; set; }
+        //public string Name { get; set; }
         public string MarketCap { get; set; }
         public string DividendYield { get; set; }
         public string SelfCapitalizationRatio { get; set; }
         public string Feature { get; set; }
         public string FoundedDate { get; set; }
         public string FoundedYear => ExtractYearFromDate(FoundedDate); // 西暦年を取得
+        public string PreviousClose { get; set; } // 前日終値
+
 
 
         // 年を抽出するためのヘルパーメソッド

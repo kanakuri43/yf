@@ -32,6 +32,7 @@ namespace yf
                 {
                     var columns = line.Split(',');
                     if (columns.Length < 2) continue;
+                    if (columns[4].Trim() == "-") continue; // ETF関連はスキップ
 
                     var currentCode = columns[1].Trim(); // B列からコードを取得
                     var companyInfo = new CompanyInfo();
@@ -67,7 +68,17 @@ namespace yf
                                 { "//tr[th[contains(text(), '特色')]]/td", data => companyInfo.Feature = data },
                                 { "//tr[th[contains(text(), '上場年月日')]]/td", data => companyInfo.FoundedDate = data }
                             }
-                        )
+                        ),
+                        (
+                            $"https://www.nikkei.com/nkd/company/kessan/?scode={currentCode}",
+                            new Dictionary<string, Action<string>>
+                            {
+                                // 売上高と営業利益のXPath指定
+                                { "//th[contains(text(),'売上高')]/following-sibling::td[last()]", data => companyInfo.Revenue = data },
+                                { "//th[contains(text(),'営業利益')]/following-sibling::td[last()]", data => companyInfo.OperatingProfit = data }
+                            }
+                        ),
+
                     };
 
                     // URLとXPathを基にデータ取得

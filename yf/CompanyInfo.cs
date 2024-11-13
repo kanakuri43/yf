@@ -19,8 +19,8 @@ namespace yf
         public string FoundedDate { get; set; }
         public string FoundedYear => ExtractYearFromDate(FoundedDate); // 西暦年を取得
         public string PreviousClose { get; set; } // 前日終値
-
-
+        public string Revenue { get; set; } // 売上高
+        public string OperatingProfit { get; set; } // 営業利益
 
         // 年を抽出するためのヘルパーメソッド
         private static string ExtractYearFromDate(string date)

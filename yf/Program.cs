@@ -142,14 +142,16 @@ namespace yf
                 // 各オブジェクトのプロパティ値を取得してCSVに出力
                 foreach (var company in companyInfoList)
                 {
-                    // すべてのプロパティがnullまたは空であるかを確認
-                    var values = properties.Select(p => RemoveCommas(p.GetValue(company)?.ToString() ?? "")).ToList();
-                    if (values.All(string.IsNullOrEmpty))
+                    // 証券コードが入っていなければ、このレコードをスキップ
+                    var codeProperty = properties.FirstOrDefault(p => p.Name == "Code");
+                    var codeValue = codeProperty?.GetValue(company)?.ToString() ?? "";
+                    if (string.IsNullOrEmpty(codeValue))
                     {
-                        // すべてがnullまたは空の場合、このレコードをスキップ
                         continue;
                     }
 
+                    // プロパティの値を取得し、カンマを除去してCSVに出力
+                    var values = properties.Select(p => RemoveCommas(p.GetValue(company)?.ToString() ?? "")).ToList();
                     writer.WriteLine(string.Join(",", values));
                 }
             }

@@ -19,7 +19,7 @@ namespace yf
 
             string inputCsvFileName = args[0];
             string outputCsvFileName = args[1];
-            string intervalAverage = args[2];
+            string maxInterval = args[2];
 
             var companyInfoList = new List<CompanyInfo>();
 
@@ -36,7 +36,7 @@ namespace yf
 
                     var currentCode = columns[1].Trim(); // B列からコードを取得
                     var companyInfo = new CompanyInfo();
-                    var random = new Random();
+                    var idr = new InverseDistributionRandom(2, int.Parse(maxInterval));
 
                     Console.WriteLine($"{currentCode}");
 
@@ -89,7 +89,8 @@ namespace yf
 
                     companyInfoList.Add(companyInfo);
 
-                    int waitTime = random.Next(0, int.Parse(intervalAverage) * 2000);   
+                    int waitTime = idr.Next() * 1000;
+                    //Console.WriteLine($"wait {waitTime / 1000} sec.");
                     Thread.Sleep(waitTime);
                 }
             }

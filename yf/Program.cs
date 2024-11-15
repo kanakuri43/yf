@@ -5,6 +5,7 @@ using System.Net.Http;
 using HtmlAgilityPack;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace yf
 {
@@ -17,10 +18,12 @@ namespace yf
                 return;
             }
 
-            string inputCsvFileName = args[0];
-            string outputCsvFileName = args[1];
-            string maxInterval = args[2];
+            var inputCsvFileName = args[0];
+            var minInterval = args[1];
+            var maxInterval = args[2];
 
+            var folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var outputCsvFileName = Path.Combine(folderPath, "res.csv");
             var companyInfoList = new List<CompanyInfo>();
 
             // 入力CSVから証券コードを読み取る

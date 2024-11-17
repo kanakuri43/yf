@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RegexReplace": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\su\\source\\repos\\Scraping\\yf\\yf\\bin\\Debug\\net8.0\\res_edit.csv \"---\" \"\" C:\\Users\\su\\source\\repos\\Scraping\\yf\\yf\\bin\\Debug\\net8.0\\res_edit1.csv"
+    }
+  }
+}

@@ -51,11 +51,11 @@ namespace yf
                             $"https://finance.yahoo.co.jp/quote/{currentCode}.T",
                             new Dictionary<string, Action<string>>
                             {
-                                { "//title", data => {
-                                    companyInfo.Code = GetTextBetween(data,'【','】');
-                                    companyInfo.Name = GetTextBefore(data, '【');
-                                }},
-                                //{ "//title", data => {companyInfo.Code = GetTextBetween(data,'【','】');}},
+                                //{ "//title", data => {
+                                //    companyInfo.Code = GetTextBetween(data,'【','】');
+                                //    companyInfo.Name = GetTextBefore(data, '【');
+                                //}},
+                                { "//title", data => {companyInfo.Code = GetTextBetween(data,'【','】');}},
                                 { "//dt[span[contains(text(), '時価総額')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.MarketCap = data },
                                 { "//dt[span[contains(text(), '配当利回り')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.DividendYield = data },
                                 { "//dt[span[contains(text(), 'PER')]]/following-sibling::dd//span[@class='StyledNumber__value__3rXW DataListItem__value__11kV']", data => companyInfo.PER = data },
@@ -112,7 +112,7 @@ namespace yf
                 foreach (var (xpath, assignAction) in dataMappings)
                 {
                     var node = htmlDoc.DocumentNode.SelectSingleNode(xpath);
-                    assignAction(node?.InnerText.Trim() ?? "N/A");
+                    assignAction(node?.InnerText.Trim() ?? "");
                 }
             }
         }

@@ -9,7 +9,7 @@ namespace yf
     internal class CompanyInfo
     {
         public string Code { get; set; }
-        public string Name { get; set; }
+        //public string Name { get; set; }
         public string MarketCap { get; set; }
         public string DividendYield { get; set; }
         public string PER { get; set; }
@@ -29,7 +29,7 @@ namespace yf
             {
                 return parsedDate.Year.ToString(); // 年のみを取得
             }
-            return "N/A"; // パース失敗時
+            return ""; // パース失敗時
         }
     }
 }

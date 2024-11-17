@@ -2,7 +2,7 @@
   "profiles": {
     "yf": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\su\\Desktop\\data_j100.csv 2 20"
+      "commandLineArgs": "C:\\Users\\su\\Desktop\\data_j.csv 2 15"
     }
   }
 }
